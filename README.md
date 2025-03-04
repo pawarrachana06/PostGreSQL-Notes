@@ -277,4 +277,6 @@ SELECT * FROM employees WHERE name LIKE 'leslie%';
   ```sql
   SELECT * FROM employees WHERE name ILIKE 'leslie%';
   ```
-  - Matches both `Leslie` and `leslie`.  
+  - Matches both `Leslie` and `leslie`.
+  - ![image](https://github.com/user-attachments/assets/226f1958-8c9f-4980-8bca-36a69647f611)
+
