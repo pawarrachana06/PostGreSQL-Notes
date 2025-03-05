@@ -1,4 +1,4 @@
-# Sql-Notes
+# PostGreSQL-Notes
 
 An oraganised collection of data.
 
@@ -279,4 +279,68 @@ SELECT * FROM employees WHERE name LIKE 'leslie%';
   ```
   - Matches both `Leslie` and `leslie`.
   - ![image](https://github.com/user-attachments/assets/226f1958-8c9f-4980-8bca-36a69647f611)
+
+
+## Aggregate functions
+
+1. Count : Number of rows (go for non empty primary key)
+
+2. SUM : Returns the sum of specified column
+
+3. Avg: Retruns the avg of the specified column
+
+4. MAX: Retruns the max of the specified column
+
+5. MIN: Retruns the min of the specified column
+
+## Group by
+
+Common column is must. Can work with aggregate functions
+``` sql
+SELECT dept, COUNT(fname)
+FROM employees
+GROUP BY dept
+```
+```
+select dept,COUNT(*) from employees GROUP BY dept;
+```
+
+## String functions
+
+1. CONCAT , CONCAT_WS: join two columns
+```
+select concat(fname,' ',lname) from employees;
+```
+
+``` sql
+select concat_ws(' ',fname,lname) from employees;
+```
+
+
+2. SUBSTR
+
+``` sql
+select SUBSTR('hello buddy',1,6);
+```
+
+3. LEFT,RIGHT: Number of words needed from left or right
+4. LENGTH
+
+``` sql
+
+select LENGTH(fname) from emmployees;
+```
+5. TRIM,LTRIM,RTRIM : remove space 
+
+6. REPLACE
+
+``` sql
+
+ select replace('hello buddy','hello','hey');
+
+```
+7. POSITION
+
+
+
 
