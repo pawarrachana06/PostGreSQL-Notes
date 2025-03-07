@@ -307,40 +307,380 @@ select dept,COUNT(*) from employees GROUP BY dept;
 
 ## String functions
 
-1. CONCAT , CONCAT_WS: join two columns
-```
-select concat(fname,' ',lname) from employees;
-```
 
-``` sql
-select concat_ws(' ',fname,lname) from employees;
+### **1. CONCAT, CONCAT_WS: Join Two Columns**
+```sql
+SELECT CONCAT(fname, ' ', lname) FROM employees;
+SELECT CONCAT_WS(' ', fname, lname) FROM employees;
 ```
 
-
-2. SUBSTR
-
-``` sql
-select SUBSTR('hello buddy',1,6);
+### **2. SUBSTR: Extract a Substring**
+```sql
+SELECT SUBSTR('hello buddy', 1, 6);
 ```
 
-3. LEFT,RIGHT: Number of words needed from left or right
-4. LENGTH
-
-``` sql
-
-select LENGTH(fname) from emmployees;
+### **3. LEFT, RIGHT: Extract a Specific Number of Characters**
+```sql
+SELECT LEFT(fname, 3) FROM employees;  -- First 3 letters
+SELECT RIGHT(fname, 2) FROM employees; -- Last 2 letters
 ```
-5. TRIM,LTRIM,RTRIM : remove space 
 
-6. REPLACE
-
-``` sql
-
- select replace('hello buddy','hello','hey');
-
+### **4. LENGTH: Get the Length of a String**
+```sql
+SELECT LENGTH(fname) FROM employees;
 ```
-7. POSITION
 
+### **5. TRIM, LTRIM, RTRIM: Remove Spaces**
+```sql
+SELECT TRIM('   hello   ');   -- 'hello'
+SELECT LTRIM('   hello');     -- 'hello'
+SELECT RTRIM('hello   ');     -- 'hello'
+```
+
+### **6. REPLACE: Replace a Substring**
+```sql
+SELECT REPLACE('hello buddy', 'hello', 'hey');
+```
+
+### **7. POSITION: Find a Substring's Position**
+```sql
+SELECT POSITION('buddy' IN 'hello buddy');  -- Returns starting index
+```
+
+## Alter table
+
+
+The `ALTER` statement in SQL is used to modify an existing database table structure.
+
+### **1. Add a Column**
+```sql
+ALTER TABLE employees ADD COLUMN age INT;
+```
+
+### **2. Drop a Column**
+```sql
+ALTER TABLE employees DROP COLUMN age;
+```
+
+### **3. Modify Column Data Type**
+```sql
+ALTER TABLE employees MODIFY COLUMN age BIGINT;
+```
+
+### **4. Rename a Column**
+```sql
+ALTER TABLE employees RENAME COLUMN fname TO first_name;
+```
+
+### **5. Rename a Table**
+```sql
+ALTER TABLE employees RENAME TO staff;
+```
+
+### **6. Add a Constraint**
+```sql
+ALTER TABLE employees ADD CONSTRAINT unique_email UNIQUE (email);
+```
+
+### **7. Drop a Constraint**
+```sql
+ALTER TABLE employees DROP CONSTRAINT unique_email;
+```
+
+
+### **8. Set a Default Value for a Column**
+```sql
+ALTER TABLE employees ALTER COLUMN age SET DEFAULT 25;
+```
+
+### **9. Remove Default Value from a Column**
+```sql
+ALTER TABLE employees ALTER COLUMN age DROP DEFAULT;
+```
+
+### **10. Set a Column as NOT NULL**
+```sql
+ALTER TABLE employees MODIFY COLUMN age INT NOT NULL;
+```
+
+### **11. Remove NOT NULL Constraint from a Column**
+```sql
+ALTER TABLE employees MODIFY COLUMN age INT NULL;
+```
+
+## **CHECK Constraint in SQL**
+
+The `CHECK` constraint ensures that all values in a column meet specific conditions.
+
+### **1. Add a CHECK Constraint**
+```sql
+ALTER TABLE employees ADD CONSTRAINT check_salary CHECK (salary > 30000);
+```
+
+### **2. Add a CHECK Constraint with Multiple Conditions**
+```sql
+ALTER TABLE employees ADD CONSTRAINT check_age_salary CHECK (age >= 18 AND salary > 30000);
+```
+
+### **3. Drop a CHECK Constraint**
+```sql
+ALTER TABLE employees DROP CONSTRAINT check_salary;
+```
+
+### **4. Use CHECK Without a Named Constraint**
+```sql
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    age INT CHECK (age >= 18),
+    salary DECIMAL(10,2) CHECK (salary > 30000)
+);
+```
+
+## **CASE Expression in SQL**
+
+The `CASE` expression allows conditional logic in SQL queries.
+
+### **1. Simple CASE Expression**
+```sql
+SELECT name, salary,
+    CASE salary 
+        WHEN 50000 THEN 'Average'
+        WHEN 100000 THEN 'High'
+        ELSE 'Other'
+    END AS salary_category
+FROM employees;
+```
+
+### **2. Searched CASE Expression**
+```sql
+SELECT name, age,
+    CASE 
+        WHEN age < 18 THEN 'Minor'
+        WHEN age BETWEEN 18 AND 60 THEN 'Adult'
+        ELSE 'Senior'
+    END AS age_group
+FROM employees;
+```
+
+
+
+## **Relationships in SQL**
+
+SQL relationships define how data in different tables is connected. The most common relationships are:
+
+### **1. One-to-One Relationship**
+```sql
+CREATE TABLE employee_details (
+    employee_id INT PRIMARY KEY,
+    address VARCHAR(255),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+```
+
+### **2. One-to-Many Relationship**
+```sql
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    employee_id INT,
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+```
+
+### **3. Many-to-Many Relationship (Using a Junction Table)**
+```sql
+CREATE TABLE employee_projects (
+    employee_id INT,
+    project_id INT,
+    PRIMARY KEY (employee_id, project_id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id),
+    FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+```
+
+
+## **Foreign Key in SQL**
+
+A `FOREIGN KEY` is a field in one table that uniquely refers to the `PRIMARY KEY` in another table. It helps maintain referential integrity.
+
+### **1. Adding a Foreign Key**
+```sql
+ALTER TABLE orders ADD CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES employees(id);
+```
+
+### **2. Creating a Table with a Foreign Key**
+```sql
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    employee_id INT,
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+```
+
+### **3. Dropping a Foreign Key**
+```sql
+ALTER TABLE orders DROP CONSTRAINT fk_employee
+
+![image](https://github.com/user-attachments/assets/f982534a-6d61-492f-bd78-484b2b38e023)
+
+
+
+## **CHECK Constraint in SQL**
+
+The `CHECK` constraint ensures that all values in a column meet specific conditions.
+
+### **1. Add a CHECK Constraint**
+```sql
+ALTER TABLE employees ADD CONSTRAINT check_salary CHECK (salary > 30000);
+```
+
+### **2. Add a CHECK Constraint with Multiple Conditions**
+```sql
+ALTER TABLE employees ADD CONSTRAINT check_age_salary CHECK (age >= 18 AND salary > 30000);
+```
+
+### **3. Drop a CHECK Constraint**
+```sql
+ALTER TABLE employees DROP CONSTRAINT check_salary;
+```
+
+### **4. Use CHECK Without a Named Constraint**
+```sql
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    age INT CHECK (age >= 18),
+    salary DECIMAL(10,2) CHECK (salary > 30000)
+);
+```
+
+## **CASE Expression in SQL**
+
+The `CASE` expression allows conditional logic in SQL queries.
+
+### **1. Simple CASE Expression**
+```sql
+SELECT name, salary,
+    CASE salary 
+        WHEN 50000 THEN 'Average'
+        WHEN 100000 THEN 'High'
+        ELSE 'Other'
+    END AS salary_category
+FROM employees;
+```
+
+### **2. Searched CASE Expression**
+```sql
+SELECT name, age,
+    CASE 
+        WHEN age < 18 THEN 'Minor'
+        WHEN age BETWEEN 18 AND 60 THEN 'Adult'
+        ELSE 'Senior'
+    END AS age_group
+FROM employees;
+```
+
+## **Relationships in SQL**
+
+SQL relationships define how data in different tables is connected. The most common relationships are:
+
+### **1. One-to-One Relationship**
+```sql
+CREATE TABLE employee_details (
+    employee_id INT PRIMARY KEY,
+    address VARCHAR(255),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+```
+
+### **2. One-to-Many Relationship**
+```sql
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    employee_id INT,
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+```
+
+### **3. Many-to-Many Relationship (Using a Junction Table)**
+```sql
+CREATE TABLE employee_projects (
+    employee_id INT,
+    project_id INT,
+    PRIMARY KEY (employee_id, project_id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id),
+    FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+```
+
+## **Foreign Key in SQL**
+
+A `FOREIGN KEY` is a field in one table that uniquely refers to the `PRIMARY KEY` in another table. It helps maintain referential integrity.
+
+### **1. Adding a Foreign Key**
+```sql
+ALTER TABLE orders ADD CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES employees(id);
+```
+
+### **2. Creating a Table with a Foreign Key**
+```sql
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    employee_id INT,
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+```
+
+### **3. Dropping a Foreign Key**
+```sql
+ALTER TABLE orders DROP CONSTRAINT fk_employee;
+```
+
+## **Joins in SQL**
+
+Joins are used to combine rows from two or more tables based on a related column.
+
+### **1. INNER JOIN** (Returns only matching records from both tables)
+```sql
+SELECT employees.id, employees.name, orders.order_id
+FROM employees
+INNER JOIN orders ON employees.id = orders.employee_id;
+```
+
+### **2. LEFT JOIN (or LEFT OUTER JOIN)** (Returns all records from the left table and matching records from the right table)
+```sql
+SELECT employees.id, employees.name, orders.order_id
+FROM employees
+LEFT JOIN orders ON employees.id = orders.employee_id;
+```
+
+### **3. RIGHT JOIN (or RIGHT OUTER JOIN)** (Returns all records from the right table and matching records from the left table)
+```sql
+SELECT employees.id, employees.name, orders.order_id
+FROM employees
+RIGHT JOIN orders ON employees.id = orders.employee_id;
+```
+
+### **4. FULL JOIN (or FULL OUTER JOIN)** (Returns all records when there is a match in either left or right table)
+```sql
+SELECT employees.id, employees.name, orders.order_id
+FROM employees
+FULL JOIN orders ON employees.id = orders.employee_id;
+```
+
+### **5. CROSS JOIN** (Returns the Cartesian product of both tables, meaning each row from one table is combined with all rows from the other)
+```sql
+SELECT employees.id, employees.name, orders.order_id
+FROM employees
+CROSS JOIN orders;
+```
+
+### **6. SELF JOIN** (Joins a table with itself)
+```sql
+SELECT e1.id, e1.name, e2.name AS manager_name
+FROM employees e1
+INNER JOIN employees e2 ON e1.manager_id = e2.id;
+```
 
 
 
