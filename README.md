@@ -848,9 +848,244 @@ To use it:
 ```sql
 SELECT GetEmployeeCount();
 ```
+![user defined function](https://github.com/user-attachments/assets/bd94f44e-6e9f-44b7-b4bc-eb21fda98bef)
 
 ### Benefits of Stored Routines:
 ✅ Reduces code duplication  
 ✅ Improves performance by pre-compiling SQL  
 ✅ Enhances security by restricting direct access to tables  
+
+
+
+### Benefits of Using Views:
+✅ Simplifies complex queries  
+✅ Improves security by restricting data access  
+✅ Provides a consistent structure for reports  
+
+## Understanding the OVER Clause:
+The **OVER** clause in SQL is used with window functions to perform calculations across a set of rows related to the current row.
+
+### Example - Using OVER with ROW_NUMBER():
+Assigns a unique row number to each row within a partition:
+```sql
+SELECT name, department, salary,
+       ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS rank
+FROM employees;
+```
+#### Explanation:
+- Groups rows by department.
+- Orders them by salary within each department.
+- Assigns a row number (rank) based on the order.
+
+#### Output Example:
+| name  | department | salary | rank |
+|--------|------------|--------|------|
+| Alice  | IT        | 70000  | 1    |
+| Bob    | IT        | 65000  | 2    |
+| Carol  | HR        | 60000  | 1    |
+| Dave   | HR        | 55000  | 2    |
+
+### Common Uses of the OVER Clause:
+- **ROW_NUMBER()**: Assigns a unique row number.
+- **RANK()**: Assigns a rank, allowing ties.
+- **DENSE_RANK()**: Like `RANK()`, but without gaps.
+- **LEAD() / LAG()**: Access values from previous or next rows.
+![over](https://github.com/user-attachments/assets/7e579edb-6608-4bd7-b15d-c75ba9ca51a8)
+![partition](https://github.com/user-attachments/assets/6e2b2f01-0c7f-4b6e-be2f-e13448174515)
+![lead](https://github.com/user-attachments/assets/3b1c648a-5285-4623-92ce-e9351bc07e61)
+
+### Why Use the OVER Clause?
+✅ Allows row-level analysis without collapsing data.  
+✅ Useful for ranking, cumulative sums, and accessing row-specific details.  
+
+
+## Understanding Common Table Expressions (CTE)
+A **Common Table Expression (CTE)** is a temporary result set that you can reference within a `SELECT`, `INSERT`, `UPDATE`, or `DELETE` statement.
+
+### Example - Using a CTE:
+```sql
+WITH high_salary_employees AS (
+    SELECT name, department, salary
+    FROM employees
+    WHERE salary > 60000
+)
+SELECT * FROM high_salary_employees;
+```
+#### Explanation:
+- `WITH high_salary_employees AS (...)` creates a temporary result set.
+- The main `SELECT` query retrieves data from this result set.
+
+#### Output Example:
+| name  | department | salary |
+|--------|------------|--------|
+| Alice  | IT        | 70000  |
+| Chris  | Finance   | 75000  |
+
+### Benefits of Using CTE:
+✅ Improves readability and organization of complex queries.  
+✅ Helps avoid subquery repetition.  
+✅ Can be used recursively for hierarchical data.  
+
+
+## Understanding SQL VIEW in Layman Terms
+
+### What is a VIEW?  
+A **VIEW** in SQL is like a **virtual table** that doesn’t store data itself but shows data from one or more real tables.
+
+### Think of it like this:
+Imagine a **restaurant menu** 🌟. The menu lists dishes, but the food is actually in the kitchen (real tables). The menu simply displays a selected set of items for customers (users) to see.
+
+Similarly, a **VIEW** in SQL:
+- **Pulls data from real tables** but doesn’t store it permanently.
+- **Acts like a saved query** that you can use like a table.
+- **Automatically updates** when the original table changes.
+
+### Example:
+If you have an `employees` table but only want to see employees in the IT department, you can create a **VIEW**:
+
+```sql
+CREATE VIEW it_employees AS
+SELECT name, department, salary
+FROM employees
+WHERE department = 'IT';
+```
+
+Now, you can simply query the view:
+```sql
+SELECT * FROM it_employees;
+```
+- Instead of writing the whole query again.  
+
+#### Output Example:
+| name  | department | salary |
+|--------|------------|--------|
+| Alice  | IT        | 70000  |
+| Bob    | IT        | 65000  |
+
+### Displaying a View:
+To check the structure of a view, use:
+```sql
+SELECT * FROM information_schema.views WHERE table_name = 'it_employees';
+```
+To see the SQL code used to create a view:
+```sql
+SELECT definition FROM pg_views WHERE viewname = 'it_employees';
+```
+To list all views in the database using `information_schema`:
+```sql
+SELECT table_name FROM information_schema.views WHERE table_schema = 'public';
+```
+To list all views using PostgreSQL's `\dv` command:
+```sql
+\dv
+```
+
+### Benefits of Using Views:
+✅ Simplifies complex queries  
+✅ Improves security by restricting data access  
+✅ Provides a consistent structure for reports  
+
+---
+
+## Understanding the OVER Clause:
+The **OVER** clause in SQL is used with window functions to perform calculations across a set of rows related to the current row.
+
+### Example - Using OVER with ROW_NUMBER():
+Assigns a unique row number to each row within a partition:
+```sql
+SELECT name, department, salary,
+       ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS rank
+FROM employees;
+```
+#### Explanation:
+- Groups rows by department.
+- Orders them by salary within each department.
+- Assigns a row number (rank) based on the order.
+
+#### Output Example:
+| name  | department | salary | rank |
+|--------|------------|--------|------|
+| Alice  | IT        | 70000  | 1    |
+| Bob    | IT        | 65000  | 2    |
+| Carol  | HR        | 60000  | 1    |
+| Dave   | HR        | 55000  | 2    |
+
+### Common Uses of the OVER Clause:
+- **ROW_NUMBER()**: Assigns a unique row number.
+- **RANK()**: Assigns a rank, allowing ties.
+- **DENSE_RANK()**: Like `RANK()`, but without gaps.
+- **LEAD() / LAG()**: Access values from previous or next rows.
+
+### Why Use the OVER Clause?
+✅ Allows row-level analysis without collapsing data.  
+✅ Useful for ranking, cumulative sums, and accessing row-specific details.  
+
+---
+
+## Understanding Common Table Expressions (CTE)
+A **Common Table Expression (CTE)** is a temporary result set that you can reference within a `SELECT`, `INSERT`, `UPDATE`, or `DELETE` statement.
+
+### Example - Using a CTE:
+```sql
+WITH high_salary_employees AS (
+    SELECT name, department, salary
+    FROM employees
+    WHERE salary > 60000
+)
+SELECT * FROM high_salary_employees;
+```
+#### Explanation:
+- `WITH high_salary_employees AS (...)` creates a temporary result set.
+- The main `SELECT` query retrieves data from this result set.
+
+#### Output Example:
+| name  | department | salary |
+|--------|------------|--------|
+| Alice  | IT        | 70000  |
+| Chris  | Finance   | 75000  |
+
+### Benefits of Using CTE:
+✅ Improves readability and organization of complex queries.  
+✅ Helps avoid subquery repetition.  
+✅ Can be used recursively for hierarchical data.  
+
+![point](https://github.com/user-attachments/assets/01ff19d9-80e0-4b19-928c-aebdd336c63b)
+
+
+---
+
+## Understanding SQL Triggers
+A **Trigger** in SQL is a special type of stored procedure that automatically executes in response to certain events on a table.
+
+### Example - Creating a Trigger:
+Automatically updates the `last_updated` column whenever an `employees` record is modified:
+
+```sql
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE ON employees
+FOR EACH ROW
+EXECUTE FUNCTION update_last_updated_column();
+```
+![syntax](https://github.com/user-attachments/assets/8d4048a5-1a1b-4cc8-aa04-5e2079fd7a97)
+
+
+![function](https://github.com/user-attachments/assets/40cc6db6-f06b-478a-9eba-13c0f83e9fa2)
+
+
+![use case](https://github.com/user-attachments/assets/06268701-a7f6-4f9f-a1a6-7b6df314a5ae)
+
+![function](https://github.com/user-attachments/assets/ed3453c8-2f73-4b3e-b830-01e13b2ea94d)
+
+
+![trigger](https://github.com/user-attachments/assets/c426959d-3437-4912-87c7-bf3ab8a5fa12)
+
+Where `update_last_updated_column` is a function that updates the `last_updated` field.
+
+### Benefits of Using Triggers:
+✅ Automates tasks like logging, validation, or calculations.  
+✅ Ensures data integrity and consistency.  
+✅ Reduces manual intervention and improves efficiency.  
+
+
+
 
