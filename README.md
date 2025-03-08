@@ -613,6 +613,10 @@ CREATE TABLE employee_projects (
 );
 ```
 
+when there is mant to many relation ,we need one extra table (junction table ) which will keep the matching enteries.to avoid data duplications
+![many-to-many](https://github.com/user-attachments/assets/c6973454-c828-4f14-bba9-6ee64985d6fa)
+
+
 ## **Foreign Key in SQL**
 
 A `FOREIGN KEY` is a field in one table that uniquely refers to the `PRIMARY KEY` in another table. It helps maintain referential integrity.
@@ -682,5 +686,171 @@ FROM employees e1
 INNER JOIN employees e2 ON e1.manager_id = e2.id;
 ```
 
+## Understanding SQL VIEW 
 
+### What is a VIEW?  
+A **VIEW** in SQL is like a **virtual table** that doesn’t store data itself but shows data from one or more real tables.
+
+### Think of it like this:
+Imagine a **restaurant menu** 📜. The menu lists dishes, but the food is actually in the kitchen (real tables). The menu simply displays a selected set of items for customers (users) to see.
+
+Similarly, a **VIEW** in SQL:
+- **Pulls data from real tables** but doesn’t store it permanently.
+- **Acts like a saved query** that you can use like a table.
+- **Automatically updates** when the original table changes.
+
+### Example:
+If you have an `employees` table but only want to see employees in the IT department, you can create a **VIEW**:
+
+```sql
+CREATE VIEW it_employees AS
+SELECT name, department, salary
+FROM employees
+WHERE department = 'IT';
+```
+
+Now, you can simply query the view:
+```sql
+SELECT * FROM it_employees;
+```
+- Instead of writing the whole query again.  
+
+### Displaying a View:
+To check the structure of a view, use:
+```sql
+SELECT * FROM information_schema.views WHERE table_name = 'it_employees';
+```
+To see the SQL code used to create a view:
+```sql
+SELECT definition FROM pg_views WHERE viewname = 'it_employees';
+```
+To list all views in the database using `information_schema`:
+```sql
+SELECT table_name FROM information_schema.views WHERE table_schema = 'public';
+```
+To list all views using PostgreSQL's `\dv` command:
+```sql
+\dv
+```  
+
+### Benefits of Using Views:
+✅ Simplifies complex queries  
+✅ Improves security by restricting data access  
+✅ Provides a consistent structure for reports  
+
+
+### HAVING Clause in SQL Views:
+The **HAVING** clause is used to filter results based on aggregate functions (e.g., `SUM`, `COUNT`, `AVG`). It works similarly to `WHERE`, but for grouped data.
+
+#### Example:
+Suppose you want to see departments with an average salary greater than 50,000 from the `employees` view:
+
+```sql
+SELECT department, AVG(salary) AS avg_salary
+FROM it_employees
+GROUP BY department
+HAVING AVG(salary) > 50000;
+```
+
+### Can the HAVING Clause Be Used on Non-Aggregate Columns?
+No, the **HAVING** clause is specifically designed for filtering grouped results using aggregate functions. If you need to filter rows based on non-aggregated columns, you should use the **WHERE** clause instead.
+
+#### Incorrect Usage:
+```sql
+SELECT department, salary
+FROM it_employees
+GROUP BY department
+HAVING salary > 50000; -- ❌ This will cause an error
+```
+
+#### Correct Usage:
+```sql
+SELECT department, salary
+FROM it_employees
+WHERE salary > 50000; -- ✅ Use WHERE for non-aggregated columns
+```
+
+
+### Understanding ROLLUP in SQL:
+The **ROLLUP** operator is used to generate subtotals and grand totals in aggregate queries.
+
+#### Example:
+Suppose you want to calculate the total salary per department, along with a grand total:
+
+```sql
+SELECT department, SUM(salary) AS total_salary
+FROM it_employees
+GROUP BY ROLLUP(department);
+```
+
+#### Explanation:
+- This query will return total salaries for each department.
+- It will also add an extra row with the grand total (sum of all salaries).
+
+### Why Use ROLLUP?
+✅ Saves time by automatically generating subtotals and totals.  
+✅ Reduces the need for multiple queries.  
+
+### Understanding COALESCE in SQL:
+The **COALESCE** function is used to return the first non-null value from a list of values.
+
+#### Example:
+If some employees do not have a department assigned, you can use `COALESCE` to replace `NULL` values with a default value:
+
+```sql
+SELECT name, COALESCE(department, 'Not Assigned') AS department
+FROM employees;
+```
+
+#### Explanation:
+- If `department` is NULL, it will be replaced with 'Not Assigned'.
+- Otherwise, it will show the actual department name.
+
+### Why Use COALESCE?
+✅ Prevents NULL values from appearing in query results.  
+✅ Helps provide meaningful default values.  
+
+![rollup](https://github.com/user-attachments/assets/16c67de4-5252-4b81-bd37-1729bae1a10b)
+
+### Understanding Stored Routines in SQL:
+A **Stored Routine** in SQL is a set of SQL statements that are saved and executed as a unit. It includes:
+- **Stored Procedures** (perform operations but do not return a value)
+- **User-Defined Functions** (return a value)
+
+#### Example - Stored Procedure:
+A procedure to increase salaries by a percentage:
+```sql
+CREATE PROCEDURE IncreaseSalary (IN percentage DECIMAL)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE employees
+    SET salary = salary + (salary * percentage / 100);
+END $$;
+```
+To execute it:
+```sql
+CALL IncreaseSalary(10);
+```
+![SP](https://github.com/user-attachments/assets/51fd9055-57ce-46fe-81d8-ce58d5e1f6fc)
+
+#### Example - User-Defined Function:
+A function to get the employee count:
+```sql
+CREATE FUNCTION GetEmployeeCount() RETURNS INT AS $$
+DECLARE emp_count INT;
+BEGIN
+    SELECT COUNT(*) INTO emp_count FROM employees;
+    RETURN emp_count;
+END $$ LANGUAGE plpgsql;
+```
+To use it:
+```sql
+SELECT GetEmployeeCount();
+```
+
+### Benefits of Stored Routines:
+✅ Reduces code duplication  
+✅ Improves performance by pre-compiling SQL  
+✅ Enhances security by restricting direct access to tables  
 
