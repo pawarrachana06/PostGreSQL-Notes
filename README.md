@@ -60,7 +60,7 @@ Drop database db_name
 
 ## CRUD operations
 
-Table : A table is a collection of related data held in a a table format within a database
+Table : A table is a collection of related data held in a  table format within a database
 
 1.Create table
 
@@ -85,7 +85,7 @@ city VARCHAR(100),
 3.Insert data
 
 ``` sql
-INSERT INTO table_name (id,name,city) values (1,"Rahul","Mumbai") , (..._,(...)
+INSERT INTO table_name (id,name,city) values (1,"Rahul","Mumbai") , (...),(...)
 
 ```
 
@@ -128,16 +128,12 @@ WHERE CONDITION
 ```
 \dt
 ```
-8. Describe table
-```
-\d table_name
-```
 
-9. Check the current value of serial variable
+8. Check the current value of serial variable
 ```
 select currval('employees_emp_id_seq');
 ```
-10. Set the value for variable
+9. Set the value for variable
 
 ```
 select setval('employees_emp_id_seq',1);
@@ -147,7 +143,7 @@ select setval('employees_emp_id_seq',1);
 
 ![image](https://github.com/user-attachments/assets/7b05b39e-55c5-4dd9-b016-455a565a6952)
 
-The above table was given an auto increment contrain , it set the regclass variable
+The above table was given an auto increment constrain , it set the regclass variable
 
 ##  DATATYPES AND CONSTRAINTS
 
